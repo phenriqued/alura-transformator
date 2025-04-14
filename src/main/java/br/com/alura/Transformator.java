@@ -17,9 +17,10 @@ public class Transformator {
         Arrays.stream(sourceFields)
                 .forEach(sourceField -> Arrays.stream(targetFields)
                         .forEach(targetField -> {
-                            validate(sourceField, targetField);
                             try {
-                                targetField.set(target, sourceField.get(source));
+                                if(validate(sourceField, targetField)){
+                                    targetField.set(target, sourceField.get(source));
+                                }
                             } catch (IllegalAccessException e) {
                                 System.out.println(e.getMessage());
                             }
@@ -28,11 +29,13 @@ public class Transformator {
         return target;
     }
 
-    private void validate(Field sourceField, Field targetField) {
+    private boolean validate(Field sourceField, Field targetField) {
         if (sourceField.getName().equals(targetField.getName())
                 && sourceField.getType() == targetField.getType()) {
             sourceField.setAccessible(true);
             targetField.setAccessible(true);
+            return true;
         }
+        return false;
     }
 }
